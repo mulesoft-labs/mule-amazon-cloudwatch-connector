@@ -1,0 +1,11 @@
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:cloudwatch="http://www.mulesoft.org/schema/mule/cloudwatch"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+          http://www.mulesoft.org/schema/mule/cloudwatch http://www.mulesoft.org/schema/mule/cloudwatch/current/mule-cloudwatch.xsd">
+
+    <cloudwatch:config name="config" configId="configId">
+        <cloudwatch:connection requiredParameter="aValue" />
+    </cloudwatch:config>
+
+</mule>
