@@ -1,14 +1,14 @@
 {
   "name": "Cloudwatch",
   "description": "",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "vendor": "Mulesoft",
   "category": "COMMUNITY",
   "xmlDsl": {
     "prefix": "cloudwatch",
     "namespace": "http://www.mulesoft.org/schema/mule/cloudwatch",
     "schemaLocation": "http://www.mulesoft.org/schema/mule/cloudwatch/current/mule-cloudwatch.xsd",
-    "schemaVersion": "1.0.1",
+    "schemaVersion": "1.0.0",
     "xsdFileName": "mule-cloudwatch.xsd"
   },
   "resources": [],
@@ -1778,7 +1778,7 @@
                     "order": 4
                   },
                   "allowedStereotypeModels": [],
-                  "name": "metricDataQueriesInputs",
+                  "name": "metricDataQueries",
                   "description": "",
                   "modelProperties": {}
                 },
@@ -2162,7 +2162,7 @@
                     "order": 1
                   },
                   "allowedStereotypeModels": [],
-                  "name": "dimensionsInputs",
+                  "name": "dimensions",
                   "description": "",
                   "modelProperties": {}
                 },
@@ -3171,7 +3171,7 @@
                     "order": 1
                   },
                   "allowedStereotypeModels": [],
-                  "name": "metricDatumsInputs",
+                  "name": "metricDatums",
                   "description": "",
                   "modelProperties": {}
                 },

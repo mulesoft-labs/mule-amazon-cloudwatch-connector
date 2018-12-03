@@ -190,7 +190,7 @@ Get MetricData
 | Start Time a| String |  |  | *x*{nbsp}
 | End Time a| String |  |  | *x*{nbsp}
 | Max Datapoints a| Number |  |  | {nbsp}
-| Metric Data Queries Inputs a| Array of <<MetricDataQueryInput>> |  |  | *x*{nbsp}
+| Metric Data Queries a| Array of <<MetricDataQueryInput>> |  |  | *x*{nbsp}
 | Next Token a| String |  |  | {nbsp}
 | Scan By a| String |  |  | {nbsp}
 | Target Variable a| String |  +++The name of a variable on which the operation's output will be placed+++ |  | {nbsp}
@@ -226,7 +226,7 @@ Get MetricStatistics
 |======================
 | Name | Type | Description | Default Value | Required
 | Configuration | String | The name of the configuration to use. | | *x*{nbsp}
-| Dimensions Inputs a| Array of <<DimensionInput>> |  |  | {nbsp}
+| Dimensions a| Array of <<DimensionInput>> |  |  | {nbsp}
 | Start Time a| String |  |  | *x*{nbsp}
 | End Time a| String |  |  | *x*{nbsp}
 | Extended Statistics a| Array of String |  |  | {nbsp}
@@ -305,7 +305,7 @@ Put MetricData
 |======================
 | Name | Type | Description | Default Value | Required
 | Configuration | String | The name of the configuration to use. | | *x*{nbsp}
-| Metric Datums Inputs a| Array of <<MetricDatumInput>> |  |  | *x*{nbsp}
+| Metric Datums a| Array of <<MetricDatumInput>> |  |  | *x*{nbsp}
 | Namespace a| String |  |  | *x*{nbsp}
 | Target Variable a| String |  +++The name of a variable on which the operation's output will be placed+++ |  | {nbsp}
 | Target Value a| String |  +++An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable+++ |  +++#[payload]+++ | {nbsp}
