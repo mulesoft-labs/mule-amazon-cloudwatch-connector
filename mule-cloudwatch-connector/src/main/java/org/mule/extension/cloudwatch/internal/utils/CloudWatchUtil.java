@@ -5,16 +5,16 @@
  */
 package org.mule.extension.cloudwatch.internal.utils;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.apache.commons.lang3.StringUtils;
 import org.mule.extension.cloudwatch.api.DimensionInput;
 import org.mule.extension.cloudwatch.api.MetricDataQueryInput;
 import org.mule.extension.cloudwatch.api.MetricDatumInput;
@@ -29,17 +29,12 @@ import com.amazonaws.services.cloudwatch.model.Dimension;
 import com.amazonaws.services.cloudwatch.model.DimensionFilter;
 import com.amazonaws.services.cloudwatch.model.GetMetricDataRequest;
 import com.amazonaws.services.cloudwatch.model.GetMetricStatisticsRequest;
-import com.amazonaws.services.cloudwatch.model.HistoryItemType;
 import com.amazonaws.services.cloudwatch.model.ListMetricsRequest;
 import com.amazonaws.services.cloudwatch.model.Metric;
 import com.amazonaws.services.cloudwatch.model.MetricDataQuery;
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
 import com.amazonaws.services.cloudwatch.model.MetricStat;
 import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest;
-import com.amazonaws.services.cloudwatch.model.ScanBy;
-import com.amazonaws.services.cloudwatch.model.StandardUnit;
-import com.amazonaws.services.cloudwatch.model.StateValue;
-import com.amazonaws.services.cloudwatch.model.Statistic;
 import com.amazonaws.services.cloudwatch.model.StatisticSet;
 
 import ma.glasnost.orika.MapperFacade;
@@ -48,7 +43,6 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 public class CloudWatchUtil {
 
-	private static final String PATTERN_DATE = "yyyy-MM-dd'T'HH:mm:ssZ";
 	private static MapperFactory mapperFactory = new DefaultMapperFactory.Builder().mapNulls(false).build();
 
 	private CloudWatchUtil() {
@@ -68,14 +62,12 @@ public class CloudWatchUtil {
 	public static DescribeAlarmsRequest createDescribeAlarmsRequest(String actionPrefix, String alarmNamePrefix,
 			List<String> alarmNames, Integer maxRecords, String nextToken, String stateValue) {
 		DescribeAlarmsRequest describeAlarmsRequest = new DescribeAlarmsRequest();
-		describeAlarmsRequest.setActionPrefix(actionPrefix);
-		describeAlarmsRequest.setAlarmNamePrefix(alarmNamePrefix);
-		describeAlarmsRequest.setAlarmNames(alarmNames);
-		describeAlarmsRequest.setMaxRecords(maxRecords);
-		describeAlarmsRequest.setNextToken(nextToken);
-		if (isNotBlank(stateValue)) {
-			describeAlarmsRequest.setStateValue(StateValue.fromValue(stateValue));
-		}
+		describeAlarmsRequest.setActionPrefix(validateStringAttribute(actionPrefix));
+		describeAlarmsRequest.setAlarmNamePrefix(validateStringAttribute(alarmNamePrefix));
+		describeAlarmsRequest.setAlarmNames(validateListStringAttribute(alarmNames));
+		describeAlarmsRequest.setMaxRecords(validateIntegerAttribute(maxRecords));
+		describeAlarmsRequest.setNextToken(validateStringAttribute(nextToken));
+		describeAlarmsRequest.setStateValue(validateStringAttribute(stateValue));
 		return describeAlarmsRequest;
 	}
 
@@ -93,14 +85,12 @@ public class CloudWatchUtil {
 	public static DescribeAlarmHistoryRequest createDescribeAlarmHistoryRequest(String alarmName, String startDate,
 			String endDate, String historyItemType, Integer maxRecords, String nextToken) {
 		DescribeAlarmHistoryRequest describeAlarmHistoryRequest = new DescribeAlarmHistoryRequest();
-		describeAlarmHistoryRequest.setAlarmName(alarmName);
+		describeAlarmHistoryRequest.setAlarmName(validateStringAttribute(alarmName));
 		describeAlarmHistoryRequest.setStartDate(convertStringToDateW3CFormat(startDate));
 		describeAlarmHistoryRequest.setEndDate(convertStringToDateW3CFormat(endDate));
-		if (isNotBlank(historyItemType)) {
-			describeAlarmHistoryRequest.setHistoryItemType(HistoryItemType.fromValue(historyItemType));
-		}
-		describeAlarmHistoryRequest.setMaxRecords(maxRecords);
-		describeAlarmHistoryRequest.setNextToken(nextToken);
+		describeAlarmHistoryRequest.setMaxRecords(validateIntegerAttribute(maxRecords));
+		describeAlarmHistoryRequest.setHistoryItemType(validateStringAttribute(historyItemType));
+		describeAlarmHistoryRequest.setNextToken(validateStringAttribute(nextToken));
 		return describeAlarmHistoryRequest;
 	}
 
@@ -123,14 +113,10 @@ public class CloudWatchUtil {
 		describeAlarmsForMetricRequest.setNamespace(namespace);
 		describeAlarmsForMetricRequest.setMetricName(metricName);
 		describeAlarmsForMetricRequest.setDimensions(convertToDimension(dimensionInput));
-		describeAlarmsForMetricRequest.setExtendedStatistic(extendedStatistic);
-		describeAlarmsForMetricRequest.setPeriod(period);
-		if (isNotBlank(statistic)) {
-			describeAlarmsForMetricRequest.setStatistic(Statistic.fromValue(statistic));
-		}
-		if (isNotBlank(unit)) {
-			describeAlarmsForMetricRequest.setUnit(StandardUnit.fromValue(unit));
-		}
+		describeAlarmsForMetricRequest.setExtendedStatistic(validateStringAttribute(extendedStatistic));
+		describeAlarmsForMetricRequest.setPeriod(validateIntegerAttribute(period));
+		describeAlarmsForMetricRequest.setStatistic(validateStringAttribute(statistic));
+		describeAlarmsForMetricRequest.setUnit(validateStringAttribute(unit));
 		return describeAlarmsForMetricRequest;
 	}
 
@@ -146,10 +132,10 @@ public class CloudWatchUtil {
 	public static ListMetricsRequest createListMetricsRequest(List<DimensionInput> dimensionFiltersInput,
 			String metricName, String namespace, String nextToken) {
 		ListMetricsRequest request = new ListMetricsRequest();
+		request.setMetricName(validateStringAttribute(metricName));
+		request.setNamespace(validateStringAttribute(namespace));
 		request.setDimensions(convertToDimensionFilter(dimensionFiltersInput));
-		request.setMetricName(metricName);
-		request.setNamespace(namespace);
-		request.setNextToken(nextToken);
+		request.setNextToken(validateStringAttribute(nextToken));
 		return request;
 	}
 
@@ -167,14 +153,12 @@ public class CloudWatchUtil {
 	public static GetMetricDataRequest createGetMetricDataRequest(String startTime, String endTime,
 			Integer maxDatapoints, List<MetricDataQueryInput> metricDataQueriesInput, String nextToken, String scanBy) {
 		GetMetricDataRequest getMetricDataRequest = new GetMetricDataRequest();
-		getMetricDataRequest.setMetricDataQueries(convertTolistMetricDataQuery(metricDataQueriesInput));
 		getMetricDataRequest.setStartTime(convertStringToDateW3CFormat(startTime));
 		getMetricDataRequest.setEndTime(convertStringToDateW3CFormat(endTime));
-		getMetricDataRequest.setNextToken(nextToken);
-		if (isNotBlank(scanBy)) {
-			getMetricDataRequest.withScanBy(ScanBy.fromValue(scanBy));
-		}
-		getMetricDataRequest.setMaxDatapoints(maxDatapoints);
+		getMetricDataRequest.setMetricDataQueries(convertTolistMetricDataQuery(metricDataQueriesInput));
+		getMetricDataRequest.setNextToken(validateStringAttribute(nextToken));
+		getMetricDataRequest.withScanBy(validateStringAttribute(scanBy));
+		getMetricDataRequest.setMaxDatapoints(validateIntegerAttribute(maxDatapoints));
 		return getMetricDataRequest;
 	}
 
@@ -187,7 +171,7 @@ public class CloudWatchUtil {
 	private static List<MetricDataQuery> convertTolistMetricDataQuery(
 			List<MetricDataQueryInput> metricDataQueriesInput) {
 		return CollectionUtils.isNotEmpty(metricDataQueriesInput) ? metricDataQueriesInput.stream()
-				.map(input -> convertToMetricDataQuery(input)).collect(Collectors.toList()) : new ArrayList<>();
+				.map(input -> convertToMetricDataQuery(input)).collect(Collectors.toList()) : null;
 	}
 
 	/**
@@ -309,17 +293,15 @@ public class CloudWatchUtil {
 			String startTime, String endTime, List<String> extendedStatistics, String metricName, String namespace,
 			Integer period, List<String> statistics, String unit) {
 		GetMetricStatisticsRequest getMetricStatisticsRequest = new GetMetricStatisticsRequest();
-		getMetricStatisticsRequest.setDimensions(convertToDimension(dimensionsInput));
 		getMetricStatisticsRequest.setStartTime(convertStringToDateW3CFormat(startTime));
 		getMetricStatisticsRequest.setEndTime(convertStringToDateW3CFormat(endTime));
-		getMetricStatisticsRequest.setExtendedStatistics(extendedStatistics);
 		getMetricStatisticsRequest.setMetricName(metricName);
 		getMetricStatisticsRequest.setNamespace(namespace);
 		getMetricStatisticsRequest.setPeriod(period);
-		getMetricStatisticsRequest.setStatistics(statistics);
-		if (isNotBlank(unit)) {
-			getMetricStatisticsRequest.setUnit(StandardUnit.fromValue(unit));
-		}
+		getMetricStatisticsRequest.setDimensions(convertToDimension(dimensionsInput));
+		getMetricStatisticsRequest.setExtendedStatistics(validateListStringAttribute(extendedStatistics));
+		getMetricStatisticsRequest.setStatistics(validateListStringAttribute(statistics));
+		getMetricStatisticsRequest.setUnit(validateStringAttribute(unit));
 		return getMetricStatisticsRequest;
 	}
 
@@ -335,7 +317,7 @@ public class CloudWatchUtil {
 		MapperFacade mapper = mapperFactory.getMapperFacade();
 		return CollectionUtils.isNotEmpty(dimensionInput)
 				? dimensionInput.stream().map(input -> mapper.map(input, Dimension.class)).collect(Collectors.toList())
-				: new ArrayList<>();
+				: null;
 	}
 
 	/**
@@ -349,8 +331,37 @@ public class CloudWatchUtil {
 		mapperFactory.classMap(DimensionInput.class, DimensionFilter.class);
 		MapperFacade mapper = mapperFactory.getMapperFacade();
 		return CollectionUtils.isNotEmpty(dimensionInput) ? dimensionInput.stream()
-				.map(input -> mapper.map(input, DimensionFilter.class)).collect(Collectors.toList())
-				: new ArrayList<>();
+				.map(input -> mapper.map(input, DimensionFilter.class)).collect(Collectors.toList()) : null;
+	}
+
+	/**
+	 * Validate if the attribute is blank
+	 * 
+	 * @param value
+	 * @return
+	 */
+	private static String validateStringAttribute(String value) {
+		return StringUtils.isNotBlank(value) ? value : null;
+	}
+
+	/**
+	 * Validate if the attribute is null
+	 * 
+	 * @param value
+	 * @return
+	 */
+	private static Integer validateIntegerAttribute(Integer value) {
+		return value != null ? value : null;
+	}
+
+	/**
+	 * Validate if the list is empty
+	 * 
+	 * @param list
+	 * @return
+	 */
+	private static List<String> validateListStringAttribute(List<String> list) {
+		return CollectionUtils.isNotEmpty(list) ? list : null;
 	}
 
 	/**
@@ -360,8 +371,10 @@ public class CloudWatchUtil {
 	 * @return
 	 */
 	private static Date convertStringToDateW3CFormat(String dateStr) {
-		DateTimeFormatter dtf = DateTimeFormat.forPattern(PATTERN_DATE);
-		return dtf.parseDateTime(dateStr).toDate();
+		return StringUtils.isNotBlank(dateStr)
+				? Date.from(LocalDateTime.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+						.atZone(ZoneId.systemDefault()).toInstant())
+				: null;
 	}
 
 }
