@@ -1,12 +1,14 @@
 # Cloudwatch Extension
 
-Add description ...
-
-
-...
-
-
-...
+Connector to AWS CloudWatch
+Operations
+	DescribeAlarms
+	DescribeAlarmHistory
+	DescribeAlarmsForMetric
+	ListMetrics
+	GetMetricData
+	PutMetricData
+	GetMetricStatistics
 
 
 Add this dependency to your application pom.xml

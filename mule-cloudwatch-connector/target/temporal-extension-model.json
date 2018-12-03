@@ -1,14 +1,14 @@
 {
   "name": "Cloudwatch",
   "description": "",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "vendor": "Mulesoft",
   "category": "COMMUNITY",
   "xmlDsl": {
     "prefix": "cloudwatch",
     "namespace": "http://www.mulesoft.org/schema/mule/cloudwatch",
     "schemaLocation": "http://www.mulesoft.org/schema/mule/cloudwatch/current/mule-cloudwatch.xsd",
-    "schemaVersion": "1.0.0",
+    "schemaVersion": "1.0.1",
     "xsdFileName": "mule-cloudwatch.xsd"
   },
   "resources": [],

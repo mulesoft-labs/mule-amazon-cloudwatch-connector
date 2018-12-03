@@ -130,10 +130,10 @@ public class CloudwatchOperations {
 	 */
 	public GetMetricDataResult getMetricData(@Config CloudWatchConfiguration config,
 			@Connection CloudWatchConnection connection, String startTime, String endTime,
-			@Optional Integer maxDatapoints, List<MetricDataQueryInput> metricDataQueriesInputs,
+			@Optional Integer maxDatapoints, List<MetricDataQueryInput> metricDataQueries,
 			@Optional String nextToken, @Optional String scanBy) {
 		return getSyncClient(connection).getMetricData(CloudWatchUtil.createGetMetricDataRequest(startTime, endTime,
-				maxDatapoints, metricDataQueriesInputs, nextToken, scanBy));
+				maxDatapoints, metricDataQueries, nextToken, scanBy));
 	}
 
 	/**
@@ -145,9 +145,9 @@ public class CloudwatchOperations {
 	 * @return PutMetricDataResponse
 	 */
 	public PutMetricDataResult putMetricData(@Config CloudWatchConfiguration config,
-			@Connection CloudWatchConnection connection, List<MetricDatumInput> metricDatumsInputs, String namespace) {
+			@Connection CloudWatchConnection connection, List<MetricDatumInput> metricDatums, String namespace) {
 		return getSyncClient(connection)
-				.putMetricData(CloudWatchUtil.createPutMetricDataRequest(metricDatumsInputs, namespace));
+				.putMetricData(CloudWatchUtil.createPutMetricDataRequest(metricDatums, namespace));
 	}
 
 	/**
@@ -166,11 +166,11 @@ public class CloudwatchOperations {
 	 * @return GetMetricStatisticsResponse
 	 */
 	public GetMetricStatisticsResult getMetricStatistics(@Config CloudWatchConfiguration config,
-			@Connection CloudWatchConnection connection, @Optional List<DimensionInput> dimensionsInputs,
+			@Connection CloudWatchConnection connection, @Optional List<DimensionInput> dimensions,
 			String startTime, String endTime, @Optional List<String> extendedStatistics, String metricName,
 			String namespace, Integer period, @Optional List<String> statistics, @Optional String unit) {
 		return getSyncClient(connection)
-				.getMetricStatistics(CloudWatchUtil.createGetMetricStatisticsRequest(dimensionsInputs, startTime,
+				.getMetricStatistics(CloudWatchUtil.createGetMetricStatisticsRequest(dimensions, startTime,
 						endTime, extendedStatistics, metricName, namespace, period, statistics, unit));
 	}
 
