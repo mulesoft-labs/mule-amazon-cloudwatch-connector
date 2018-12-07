@@ -7,10 +7,12 @@ package org.mule.extension.cloudwatch.internal.utils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -371,10 +373,10 @@ public class CloudWatchUtil {
 	 * @return
 	 */
 	private static Date convertStringToDateW3CFormat(String dateStr) {
-		return StringUtils.isNotBlank(dateStr)
-				? Date.from(LocalDateTime.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-						.atZone(ZoneId.systemDefault()).toInstant())
-				: null;
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		LocalDateTime ldt = LocalDateTime.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
+		ZonedDateTime asiaZonedDateTime = ldt.atZone(ZoneId.of("UTC"));
+		return StringUtils.isNotBlank(dateStr) ? Date.from(asiaZonedDateTime.toInstant()) : null;
 	}
 
 }
